@@ -155,7 +155,11 @@ def kalman_filter(x, P):
 
 #################################################
 ### the code below is used to test the filter
+### this test uses 2-Dimensional inputs
+### x location and x velocity
 #################################################
+
+print "### 2-dimensional example ###"
 
 measurements = [1, 2, 3]
 
@@ -169,6 +173,25 @@ I = matrix([[1., 0.], [0., 1.]]) # identity matrix
 
 print(kalman_filter(x, P))
 
-# for thsis test the output should be:
-# x: [[3.9996664447958645], [0.9999998335552873]]
-# P: [[2.3318904241194827, 0.9991676099921091], [0.9991676099921067, 0.49950058263974184]]
+
+#################################################
+### the code below is used to test the filter
+### this test uses 4-Dimensional inputs
+### x and y locations + x and y velocities
+#################################################
+
+print "### 4-dimensional example ###"
+
+measurements = [[5., 10.], [6., 8.], [7., 6.], [8., 4.], [9., 2.], [10., 0.]]
+initial_xy = [4., 12.]
+dt = 0.1
+
+x = matrix([[initial_xy[0]], [initial_xy[1]], [0.], [0.]]) # initial state (location and velocity)
+u = matrix([[0.], [0.], [0.], [0.]]) # external motion
+P = matrix([[0., 0. , 0. , 0.], [0. , 0., 0., 0.], [0. , 0. , 1000., 0.],[0. , 0. , 0. , 1000.]]) # initial uncertainty: 0 for positions x and y, 1000 for the two velocities
+F = matrix([ [1. , 0., dt, 0.], [0., 1., 0., dt], [0., 0., 1., 0.], [0., 0., 0., 1.] ]) # next state function: generalize the 2d version to 4d
+H = matrix([[1., 0., 0., 0.], [0., 1., 0., 0.]]) # measurement function: reflect the fact that we observe x and y but not the two velocities
+R = matrix([[0.1,0.],[0.,0.1]]) # measurement uncertainty: use 2x2 matrix with 0.1 as main diagonal
+I = matrix([[1.,0.,0.,0.], [0.,1.,0.,0.], [0.,0.,1.,0.], [0.,0.,0.,1.]]) # 4d identity matrix
+
+print( kalman_filter(x, P) ) 
